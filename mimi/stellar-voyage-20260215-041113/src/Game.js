@@ -40,27 +40,52 @@ export class Game {
   }
   
   /**
-   * Start a new game
-   */
-  start() {
-    // Reset game variables
-    this.score = 0;
-    this.lives = 3;
-    this.level = 1;
-    this.difficulty = 1;
-    this.difficultyTimer = 0;
-    this.enemySpawnTimer = 0;
-    this.obstacleSpawnTimer = 0;
-    
-    // Clear any existing objects
-    this.cleanup();
-    
-    // Create player
-    this.player = new Player(this.scene);
-    
-    // Set state to playing AFTER everything is initialized
-    this.gameState = 'playing';
-  }
+    * Start a new game
+    */
+   start() {
+     console.log('[Game.start] Starting new game...');
+     
+     try {
+       // Reset game variables
+       this.score = 0;
+       this.lives = 3;
+       this.level = 1;
+       this.difficulty = 1;
+       this.difficultyTimer = 0;
+       this.enemySpawnTimer = 0;
+       this.obstacleSpawnTimer = 0;
+       console.log('[Game.start] Game variables reset');
+       
+       // Clear any existing objects
+       this.cleanup();
+       console.log('[Game.start] Cleanup complete');
+       
+       // Create player
+       console.log('[Game.start] Creating Player...');
+       this.player = new Player(this.scene);
+       console.log('[Game.start] Player created:', this.player);
+       console.log('[Game.start] Player mesh:', this.player.mesh);
+       console.log('[Game.start] Player position:', {
+         x: this.player.mesh.position.x,
+         y: this.player.mesh.position.y,
+         z: this.player.mesh.position.z
+       });
+       console.log('[Game.start] Scene children count:', this.scene.children.length);
+       
+       // Log all scene children
+       this.scene.children.forEach((child, idx) => {
+         console.log(`[Game.start] Scene child ${idx}: ${child.type} at (${child.position.x}, ${child.position.y}, ${child.position.z})`);
+       });
+       
+       // Set state to playing AFTER everything is initialized
+       this.gameState = 'playing';
+       console.log('[Game.start] Game state set to playing');
+       console.log('[Game.start] === Game start complete ===');
+     } catch (err) {
+       console.error('[Game.start] ERROR:', err.message, err);
+       throw err;
+     }
+   }
   
   /**
    * Restart the game

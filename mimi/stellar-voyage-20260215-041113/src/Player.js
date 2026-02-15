@@ -6,53 +6,69 @@ import { getDirection } from './utils.js';
  * Player class - Represents the player's spaceship
  */
 export class Player {
-  constructor(scene) {
-    this.scene = scene;
-    this.thrust = 30;
-    this.rotationSpeed = 2.5;
-    this.shootCooldown = 0;
-    this.shootCooldownMax = 0.2; // seconds
-    
-    // Movement state
-    this.velocity = { x: 0, y: 0, z: 0 };
-    this.keys = {};
-    
-    // Friction for inertia-based movement
-    this.friction = 0.92;
-    
-    // Projectiles and engine glow arrays (MUST be initialized BEFORE createShip)
-    this.projectiles = [];
-    this.engineGlows = [];
-    
-    // Create spaceship geometry (detailed fighter design)
-    this.createShip();
-    
-    // Game boundaries
-    this.boundX = 50;
-    this.boundY = 35;
-    this.boundZ = 20;
-  }
+   constructor(scene) {
+     console.log('[Player] Constructor called');
+     this.scene = scene;
+     this.thrust = 30;
+     this.rotationSpeed = 2.5;
+     this.shootCooldown = 0;
+     this.shootCooldownMax = 0.2; // seconds
+     
+     // Movement state
+     this.velocity = { x: 0, y: 0, z: 0 };
+     this.keys = {};
+     
+     // Friction for inertia-based movement
+     this.friction = 0.92;
+     
+     // Projectiles and engine glow arrays (MUST be initialized BEFORE createShip)
+     this.projectiles = [];
+     this.engineGlows = [];
+     
+     console.log('[Player] Properties initialized, calling createShip()...');
+     
+     // Create spaceship geometry (detailed fighter design)
+     try {
+       this.createShip();
+       console.log('[Player] createShip() completed successfully');
+     } catch (err) {
+       console.error('[Player] ERROR in createShip():', err.message, err);
+       throw err;
+     }
+     
+     // Game boundaries
+     this.boundX = 50;
+     this.boundY = 35;
+     this.boundZ = 20;
+     
+     console.log('[Player] Constructor complete - player ready!');
+   }
   
-  /**
-   * Create the player ship geometry with detailed components
-   */
-  createShip() {
-    // Create a group for the entire ship
-    this.mesh = new THREE.Group();
-    
-    // === FUSELAGE/MAIN BODY ===
-    // Main fuselage using cylinder for streamlined shape
-    const fuselageGeometry = new THREE.CylinderGeometry(0.4, 0.35, 2.5, 8);
-    const fuselageMaterial = new THREE.MeshStandardMaterial({
-      color: 0x1a1a2e,
-      emissive: 0x0a0a14,
-      metalness: 0.85,
-      roughness: 0.25
-    });
-    const fuselage = new THREE.Mesh(fuselageGeometry, fuselageMaterial);
-    fuselage.rotation.z = Math.PI / 2; // Rotate so it points along Y axis
-    fuselage.position.y = 0;
-    this.mesh.add(fuselage);
+   /**
+    * Create the player ship geometry with detailed components
+    */
+   createShip() {
+     console.log('[Player.createShip] Starting ship creation...');
+     
+     try {
+       // Create a group for the entire ship
+       this.mesh = new THREE.Group();
+       console.log('[Player.createShip] Group created');
+       
+       // === FUSELAGE/MAIN BODY ===
+       // Main fuselage using cylinder for streamlined shape
+       const fuselageGeometry = new THREE.CylinderGeometry(0.4, 0.35, 2.5, 8);
+       const fuselageMaterial = new THREE.MeshStandardMaterial({
+         color: 0x1a1a2e,
+         emissive: 0x0a0a14,
+         metalness: 0.85,
+         roughness: 0.25
+       });
+       const fuselage = new THREE.Mesh(fuselageGeometry, fuselageMaterial);
+       fuselage.rotation.z = Math.PI / 2; // Rotate so it points along Y axis
+       fuselage.position.y = 0;
+       this.mesh.add(fuselage);
+       console.log('[Player.createShip] Fuselage added');
     
     // === NOSE CONE ===
     // Sharp nose for better aerodynamic appearance
@@ -182,10 +198,19 @@ export class Player {
     this.mesh.add(weaponRight);
     this.weaponRight = weaponRight;
     
-    // Set initial position
-    this.mesh.position.set(0, 0, 0);
-    this.scene.add(this.mesh);
-  }
+       // Set initial position
+       this.mesh.position.set(0, 0, 0);
+       console.log('[Player.createShip] Mesh positioned at (0, 0, 0)');
+       
+       this.scene.add(this.mesh);
+       console.log('[Player.createShip] Mesh added to scene');
+       console.log('[Player.createShip] Scene now has', this.scene.children.length, 'children');
+       console.log('[Player.createShip] Ship creation complete!');
+     } catch (err) {
+       console.error('[Player.createShip] ERROR during ship creation:', err.message, err);
+       throw err;
+     }
+   }
   
   /**
    * Handle keyboard input

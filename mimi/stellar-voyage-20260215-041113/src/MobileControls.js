@@ -3,19 +3,26 @@
  * Implements virtual joystick and fire button for touch devices
  */
 export class MobileControls {
-  constructor(player) {
-    this.player = player;
-    this.isMobile = this.detectMobile();
-    
-    // Touch state tracking
-    this.joystickState = { x: 0, y: 0 };
-    this.firePressed = false;
-    
-    if (this.isMobile) {
-      this.createControls();
-      this.attachEventListeners();
-    }
-  }
+   constructor(player) {
+     console.log('[MobileControls] Constructor called, player:', player);
+     this.player = player;
+     this.isMobile = this.detectMobile();
+     console.log('[MobileControls] isMobile detected:', this.isMobile);
+     
+     // Touch state tracking
+     this.joystickState = { x: 0, y: 0 };
+     this.firePressed = false;
+     
+     if (this.isMobile) {
+       console.log('[MobileControls] Creating mobile control elements...');
+       this.createControls();
+       console.log('[MobileControls] Control elements created');
+       this.attachEventListeners();
+       console.log('[MobileControls] Event listeners attached');
+     } else {
+       console.log('[MobileControls] Not a mobile device - controls disabled');
+     }
+   }
   
   /**
    * Detect if the device supports touch input
