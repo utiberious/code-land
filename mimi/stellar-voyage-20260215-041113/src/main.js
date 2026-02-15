@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { Game } from './Game.js';
+import { MobileControls } from './MobileControls.js';
 
 /**
  * Stellar Voyage - Main Game Entry Point
@@ -10,6 +11,7 @@ import { Game } from './Game.js';
 let scene, camera, renderer;
 let game;
 let clock;
+let mobileControls;
 
 // DOM elements (will be initialized in init())
 let startScreen;
@@ -178,6 +180,9 @@ function startGame() {
   // Create game if first time
   if (!game) {
     game = new Game(scene);
+    
+    // Initialize mobile controls
+    mobileControls = new MobileControls(game.player);
   }
   
   // Start game
@@ -213,6 +218,11 @@ function gameLoop() {
   const deltaTime = clock.getDelta();
   
   if (game) {
+    // Update mobile controls (maps touch input to player keys)
+    if (mobileControls) {
+      mobileControls.update();
+    }
+    
     // Update game
     game.update(deltaTime);
     
