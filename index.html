@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Code Land - OpenCode Projects</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 900px;
+      width: 100%;
+    }
+    
+    header {
+      text-align: center;
+      margin-bottom: 50px;
+      color: white;
+    }
+    
+    h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .subtitle {
+      font-size: 1.2rem;
+      opacity: 0.9;
+    }
+    
+    .projects {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+    }
+    
+    .project-card {
+      background: white;
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+    
+    .project-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+    }
+    
+    .project-icon {
+      font-size: 3rem;
+      margin-bottom: 15px;
+      display: block;
+    }
+    
+    .project-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: #333;
+    }
+    
+    .project-description {
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 15px;
+    }
+    
+    .project-tech {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    
+    .tech-tag {
+      background: #f0f0f0;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      color: #555;
+    }
+    
+    .footer {
+      text-align: center;
+      margin-top: 50px;
+      color: white;
+      opacity: 0.8;
+    }
+    
+    .footer a {
+      color: white;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🚀 Code Land</h1>
+      <p class="subtitle">Projects built with OpenCode & Claude AI</p>
+    </header>
+    
+    <div class="projects">
+      <a href="mimi/counter-20260215-040523/" class="project-card">
+        <span class="project-icon">🔢</span>
+        <h2 class="project-title">React Counter</h2>
+        <p class="project-description">
+          A simple but elegant counter app demonstrating React hooks and state management.
+        </p>
+        <div class="project-tech">
+          <span class="tech-tag">React</span>
+          <span class="tech-tag">Vite</span>
+          <span class="tech-tag">CSS3</span>
+        </div>
+      </a>
+      
+      <a href="mimi/stellar-voyage-20260215-041113/" class="project-card">
+        <span class="project-icon">🚀</span>
+        <h2 class="project-title">Stellar Voyage</h2>
+        <p class="project-description">
+          A 3D space shooter game with realistic physics, detailed spaceship models, and dynamic lighting effects.
+        </p>
+        <div class="project-tech">
+          <span class="tech-tag">Three.js</span>
+          <span class="tech-tag">WebGL</span>
+          <span class="tech-tag">3D Graphics</span>
+          <span class="tech-tag">Physics</span>
+        </div>
+      </a>
+    </div>
+    
+    <div class="footer">
+      <p>Built with <a href="https://www.anthropic.com/claude" target="_blank">Claude AI</a> via <a href="https://github.com/cline/cline" target="_blank">OpenCode</a></p>
+      <p style="margin-top: 10px;">
+        <a href="https://github.com/utiberious/code-land" target="_blank">View Source on GitHub →</a>
+      </p>
+    </div>
+  </div>
+</body>
+</html>

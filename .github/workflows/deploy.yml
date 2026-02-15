@@ -1,0 +1,68 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Build Counter
+        run: |
+          cd mimi/counter-20260215-040523
+          bun install
+          bun run build
+
+      - name: Build Stellar Voyage
+        run: |
+          cd mimi/stellar-voyage-20260215-041113
+          bun install
+          bun run build
+
+      - name: Prepare deployment
+        run: |
+          # Create deployment structure
+          # URLs: /mimi/counter-20260215-040523/ and /mimi/stellar-voyage-20260215-041113/
+          mkdir -p _site/mimi/counter-20260215-040523
+          mkdir -p _site/mimi/stellar-voyage-20260215-041113
+          cp -r mimi/counter-20260215-040523/dist/* _site/mimi/counter-20260215-040523/
+          cp -r mimi/stellar-voyage-20260215-041113/dist/* _site/mimi/stellar-voyage-20260215-041113/
+          cp index.html _site/
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './_site'
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,6 @@
+node_modules/
+mimi/*/dist/
+mimi/*/node_modules/
+mimi/*/.bun/
+*.lock
+.DS_Store
