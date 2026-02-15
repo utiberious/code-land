@@ -20,6 +20,10 @@ export class Player {
     // Friction for inertia-based movement
     this.friction = 0.92;
     
+    // Projectiles and engine glow arrays (MUST be initialized BEFORE createShip)
+    this.projectiles = [];
+    this.engineGlows = [];
+    
     // Create spaceship geometry (detailed fighter design)
     this.createShip();
     
@@ -27,12 +31,6 @@ export class Player {
     this.boundX = 50;
     this.boundY = 35;
     this.boundZ = 20;
-    
-    // Projectiles
-    this.projectiles = [];
-    
-    // Engine glow references for visual feedback
-    this.engineGlows = [];
   }
   
   /**
