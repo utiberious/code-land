@@ -81,8 +81,9 @@ export class Player {
        const wireframeCube = new THREE.Mesh(wireframeGeometry, wireframeMaterial);
        this.mesh.add(wireframeCube);
        
-       // Set position at origin
-       this.mesh.position.set(0, 0, 0);
+       // Set position between camera (Z=25) and origin (Z=0)
+       // Cube at Z=10 should be clearly in view
+       this.mesh.position.set(0, 0, 10);
        
        // Add to scene
        this.scene.add(this.mesh);
