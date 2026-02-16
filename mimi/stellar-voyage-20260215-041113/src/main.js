@@ -7,7 +7,9 @@ import { MobileControls } from './MobileControls.js';
  * A 3D space shooter game built with Three.js
  */
 
+const VERSION = 'd8ae985'; // Git commit hash for version tracking
 console.log('===== Stellar Voyage - Game Initialization Starting =====');
+console.log('VERSION:', VERSION, '(GIANT TEST CUBE)');
 
 // Game variables
 let scene, camera, renderer;
