@@ -32,9 +32,15 @@ jobs:
           bun install
           bun run build
 
-      - name: Build Stellar Voyage
+      - name: Build Stellar Voyage (Three.js)
         run: |
           cd mimi/stellar-voyage-20260215-041113
+          bun install
+          bun run build
+
+      - name: Build Stellar Voyage (Babylon.js)
+        run: |
+          cd mimi/stellar-voyage-babylonjs
           bun install
           bun run build
 
@@ -43,10 +49,12 @@ jobs:
           # Create deployment structure
           mkdir -p _site/mimi/counter-20260215-040523
           mkdir -p _site/mimi/stellar-voyage-20260215-041113
+          mkdir -p _site/mimi/stellar-voyage-babylonjs
           mkdir -p _site/demos
           cp -r mimi/counter-20260215-040523/dist/* _site/mimi/counter-20260215-040523/
           cp -r mimi/stellar-voyage-20260215-041113/dist/* _site/mimi/stellar-voyage-20260215-041113/
-          cp -r demos/* _site/demos/
+          cp -r mimi/stellar-voyage-babylonjs/dist/* _site/mimi/stellar-voyage-babylonjs/
+          cp -r demos/* _site/demos/ || true
           cp index.html _site/
 
       - name: Setup Pages
