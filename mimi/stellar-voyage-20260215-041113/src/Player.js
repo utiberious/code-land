@@ -205,10 +205,32 @@ export class Player {
        this.mesh.position.set(0, 0, 0);
        console.log('[Player.createShip] Mesh positioned at (0, 0, 0)');
        
+       // === SCALE UP FOR MOBILE VISIBILITY ===
+       // Check if mobile (touch support)
+       const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+       if (isMobile) {
+         this.mesh.scale.set(2.5, 2.5, 2.5); // 2.5x larger on mobile
+         console.log('[Player.createShip] Mobile detected - scaling ship 2.5x');
+       }
+       
        this.scene.add(this.mesh);
        console.log('[Player.createShip] Mesh added to scene');
        console.log('[Player.createShip] Scene now has', this.scene.children.length, 'children');
+       
+       // === DEBUG: Add bright marker at ship position ===
+       const debugMarkerGeometry = new THREE.SphereGeometry(1.5, 16, 16);
+       const debugMarkerMaterial = new THREE.MeshBasicMaterial({
+         color: 0xff0000,
+         transparent: true,
+         opacity: 0.7
+       });
+       this.debugMarker = new THREE.Mesh(debugMarkerGeometry, debugMarkerMaterial);
+       this.debugMarker.position.copy(this.mesh.position);
+       this.scene.add(this.debugMarker);
+       console.log('[Player.createShip] DEBUG: Red marker added at ship position');
+       
        console.log('[Player.createShip] Ship creation complete!');
+       console.log('[Player.createShip] Ship scale:', this.mesh.scale);
      } catch (err) {
        console.error('[Player.createShip] ERROR during ship creation:', err.message, err);
        throw err;
@@ -323,6 +345,11 @@ export class Player {
     
     // Update projectiles
     this.updateProjectiles(deltaTime);
+    
+    // Update debug marker position
+    if (this.debugMarker) {
+      this.debugMarker.position.copy(this.mesh.position);
+    }
   }
   
   /**
