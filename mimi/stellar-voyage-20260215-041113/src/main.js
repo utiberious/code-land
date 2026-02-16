@@ -7,9 +7,9 @@ import { MobileControls } from './MobileControls.js';
  * A 3D space shooter game built with Three.js
  */
 
-const VERSION = 'e6c98d9'; // Git commit hash for version tracking
+const VERSION = 'mobile-fix-v1'; // Git commit hash for version tracking
 console.log('===== Stellar Voyage - Game Initialization Starting =====');
-console.log('VERSION:', VERSION, '(TEST CUBE at Z=10)');
+console.log('VERSION:', VERSION, '(Mobile canvas fix: clamped pixelRatio)');
 
 // Game variables
 let scene, camera, renderer;
@@ -83,9 +83,13 @@ function initThreeJs() {
        console.warn('⚠ WARNING: Could not access WebGL context');
      }
      
+     // MOBILE FIX: Clamp pixel ratio to prevent huge canvas sizes
+     const pixelRatio = Math.min(window.devicePixelRatio, 2);
+     console.log(`Pixel ratio: device=${window.devicePixelRatio}, using=${pixelRatio}`);
+     
      renderer.setSize(width, height);
-     renderer.setPixelRatio(window.devicePixelRatio);
-     renderer.shadowMap.enabled = true;
+     renderer.setPixelRatio(pixelRatio); // Use clamped ratio
+     renderer.shadowMap.enabled = false; // Disable shadows for mobile performance
      renderer.shadowMap.type = THREE.PCFShadowMap;
      
      // Style the canvas to fill the viewport
@@ -93,11 +97,15 @@ function initThreeJs() {
      renderer.domElement.style.position = 'fixed';
      renderer.domElement.style.top = '0';
      renderer.domElement.style.left = '0';
-     renderer.domElement.style.width = '100%';
-     renderer.domElement.style.height = '100%';
-     renderer.domElement.style.zIndex = '0';
+     renderer.domElement.style.width = '100vw';  // Use viewport units for mobile
+     renderer.domElement.style.height = '100vh'; // Use viewport units for mobile
+     renderer.domElement.style.zIndex = '1'; // Above background, below UI
      renderer.domElement.style.margin = '0';
      renderer.domElement.style.padding = '0';
+     renderer.domElement.style.touchAction = 'none'; // Prevent touch scrolling
+     
+     // Log actual canvas dimensions for debugging
+     console.log(`Canvas buffer size: ${renderer.domElement.width}x${renderer.domElement.height}`);
      
      // Add canvas to DOM
      document.body.appendChild(renderer.domElement);
@@ -209,10 +217,14 @@ function onWindowResize() {
    
    camera.aspect = width / height;
    camera.updateProjectionMatrix();
+   
+   // MOBILE FIX: Use clamped pixel ratio
+   const pixelRatio = Math.min(window.devicePixelRatio, 2);
    renderer.setSize(width, height);
-   renderer.setPixelRatio(window.devicePixelRatio);
+   renderer.setPixelRatio(pixelRatio);
    
    console.log('[onWindowResize] Camera and renderer updated');
+   console.log(`  Canvas buffer: ${renderer.domElement.width}x${renderer.domElement.height}`);
  }
 
 /**
