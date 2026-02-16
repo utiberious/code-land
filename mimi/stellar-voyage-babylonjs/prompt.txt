@@ -1,0 +1,32 @@
+Create a complete Babylon.js 3D space shooter game based on this spec:
+
+PROJECT: Stellar Voyage - Babylon.js version
+TECH STACK: Babylon.js 7.54.3, Vite 5.4.21
+
+STRUCTURE:
+- index.html (Canvas + HUD + menus)
+- src/main.js (Babylon.js game logic)
+- package.json (Babylon.js ^7.54.3, Vite ^5.4.21)
+- vite.config.js (base: './')
+
+GAME FEATURES:
+Desktop: WASD move, Space shoot
+Mobile: touch move, auto/click shoot
+Blue player ship (Box + Cone geometry)
+Red enemy ships (Cone geometry, spawn from top)
+Cyan lasers (Cylinder geometry)
+Collision detection (laser-enemy, player-enemy)
+Score + Lives HUD
+Game states: menu, playing, gameover
+
+MOBILE OPTIMIZATION (CRITICAL):
+engine.setHardwareScalingLevel(1 / Math.min(window.devicePixelRatio, 2))
+Disable shadows
+Simple geometry only
+touch-action: none on Canvas
+
+VERSION TRACKING:
+const VERSION = '<commit-hash>';  // in src/main.js
+console.log(`[Stellar Voyage] Version: ${VERSION}`);
+
+Create all files, install dependencies with bun, and build.
