@@ -7,19 +7,22 @@ import { getDirection } from './utils.js';
  */
 export class Player {
    constructor(scene) {
-     console.log('[Player] Constructor called');
-     this.scene = scene;
-     this.thrust = 30;
-     this.rotationSpeed = 2.5;
-     this.shootCooldown = 0;
-     this.shootCooldownMax = 0.2; // seconds
-     
-     // Movement state
-     this.velocity = { x: 0, y: 0, z: 0 };
-     this.keys = {};
-     
-     // Friction for inertia-based movement
-     this.friction = 0.92;
+      console.log('[Player] Constructor called');
+      this.scene = scene;
+      this.thrust = 30;
+      this.rotationSpeed = 2.5;
+      this.shootCooldown = 0;
+      this.shootCooldownMax = 0.2; // seconds
+      
+      // Movement state
+      this.velocity = { x: 0, y: 0, z: 0 };
+      this.keys = {};
+      
+      // Friction for inertia-based movement
+      this.friction = 0.92;
+      
+      // Flag to indicate if mobile controls are active
+      this.mobileControlsActive = false;
      
      // Projectiles and engine glow arrays (MUST be initialized BEFORE createShip)
      this.projectiles = [];
@@ -228,52 +231,55 @@ export class Player {
     this.keys[key.toLowerCase()] = false;
   }
   
-  /**
-   * Update player position based on input
-   * @param {number} deltaTime - Time since last update
-   */
-  update(deltaTime) {
-    // === ROTATION CONTROL ===
-    // A/D keys for left/right rotation
-    if (this.keys['a'] || this.keys['arrowleft']) {
-      this.mesh.rotation.z += this.rotationSpeed * deltaTime;
-    }
-    if (this.keys['d'] || this.keys['arrowright']) {
-      this.mesh.rotation.z -= this.rotationSpeed * deltaTime;
-    }
-    
-    // === THRUST CONTROL ===
-    // Calculate current ship direction based on rotation
-    const angle = this.mesh.rotation.z;
-    const direction = {
-      x: Math.sin(angle),
-      y: Math.cos(angle)
-    };
-    
-    // W/S keys for forward/backward thrust
-    if (this.keys['w'] || this.keys['arrowup']) {
-      this.velocity.x += direction.x * this.thrust * deltaTime;
-      this.velocity.y += direction.y * this.thrust * deltaTime;
-    }
-    if (this.keys['s'] || this.keys['arrowdown']) {
-      this.velocity.x -= direction.x * this.thrust * deltaTime;
-      this.velocity.y -= direction.y * this.thrust * deltaTime;
-    }
-    
-    // === VERTICAL MOVEMENT (Z AXIS) ===
-    // Q/E keys for up/down movement
-    if (this.keys['q']) {
-      this.velocity.z -= this.thrust * deltaTime;
-    }
-    if (this.keys['e']) {
-      this.velocity.z += this.thrust * deltaTime;
-    }
-    
-    // === INERTIA AND FRICTION ===
-    // Apply friction for realistic space physics with inertia
-    this.velocity.x *= this.friction;
-    this.velocity.y *= this.friction;
-    this.velocity.z *= this.friction;
+   /**
+    * Update player position based on input
+    * @param {number} deltaTime - Time since last update
+    */
+   update(deltaTime) {
+     // Skip keyboard controls if mobile controls are handling movement
+     if (!this.mobileControlsActive) {
+       // === ROTATION CONTROL ===
+       // A/D keys for left/right rotation
+       if (this.keys['a'] || this.keys['arrowleft']) {
+         this.mesh.rotation.z += this.rotationSpeed * deltaTime;
+       }
+       if (this.keys['d'] || this.keys['arrowright']) {
+         this.mesh.rotation.z -= this.rotationSpeed * deltaTime;
+       }
+       
+       // === THRUST CONTROL ===
+       // Calculate current ship direction based on rotation
+       const angle = this.mesh.rotation.z;
+       const direction = {
+         x: Math.sin(angle),
+         y: Math.cos(angle)
+       };
+       
+       // W/S keys for forward/backward thrust
+       if (this.keys['w'] || this.keys['arrowup']) {
+         this.velocity.x += direction.x * this.thrust * deltaTime;
+         this.velocity.y += direction.y * this.thrust * deltaTime;
+       }
+       if (this.keys['s'] || this.keys['arrowdown']) {
+         this.velocity.x -= direction.x * this.thrust * deltaTime;
+         this.velocity.y -= direction.y * this.thrust * deltaTime;
+       }
+       
+       // === VERTICAL MOVEMENT (Z AXIS) ===
+       // Q/E keys for up/down movement
+       if (this.keys['q']) {
+         this.velocity.z -= this.thrust * deltaTime;
+       }
+       if (this.keys['e']) {
+         this.velocity.z += this.thrust * deltaTime;
+       }
+     }
+     
+     // === INERTIA AND FRICTION ===
+     // Apply friction for realistic space physics with inertia
+     this.velocity.x *= this.friction;
+     this.velocity.y *= this.friction;
+     this.velocity.z *= this.friction;
     
     // === UPDATE POSITION ===
     this.mesh.position.x += this.velocity.x * deltaTime;

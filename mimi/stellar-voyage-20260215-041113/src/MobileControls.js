@@ -228,43 +228,53 @@ export class MobileControls {
     this.fireButton.classList.remove('active');
   }
   
-  /**
-   * Update player input based on mobile controls
-   * This should be called in the game loop
-   */
-  update() {
-    if (!this.isMobile) return;
-    
-    // Update player keys based on joystick state
-    // Right stick movement (A/D equivalent) - rotate ship
-    if (this.joystickState.x < -0.3) {
-      this.player.keys['a'] = true;
-      this.player.keys['d'] = false;
-    } else if (this.joystickState.x > 0.3) {
-      this.player.keys['d'] = true;
-      this.player.keys['a'] = false;
-    } else {
-      this.player.keys['a'] = false;
-      this.player.keys['d'] = false;
-    }
-    
-    // Vertical stick movement (W/S equivalent) - thrust
-    if (this.joystickState.y < -0.3) {
-      this.player.keys['w'] = true;
-      this.player.keys['s'] = false;
-    } else if (this.joystickState.y > 0.3) {
-      this.player.keys['s'] = true;
-      this.player.keys['w'] = false;
-    } else {
-      this.player.keys['w'] = false;
-      this.player.keys['s'] = false;
-    }
-    
-    // Fire button
-    if (this.firePressed) {
-      this.player.shoot();
-    }
-  }
+   /**
+    * Update player input based on mobile controls
+    * Implements arcade-style direct movement instead of rotation-based flight
+    * This should be called in the game loop
+    */
+   update() {
+     if (!this.isMobile) return;
+     
+     const deadzone = 0.1;
+     const speed = 8.0; // Movement speed
+     const rotationLerpSpeed = 0.1; // Rotation interpolation speed (0-1)
+     
+     // Check if joystick is active (above deadzone)
+     const isActive = Math.abs(this.joystickState.x) > deadzone || 
+                      Math.abs(this.joystickState.y) > deadzone;
+     
+     if (isActive) {
+       // === ARCADE MODE: Direct velocity control ===
+       // Joystick direction maps directly to movement
+       this.player.velocity.x = this.joystickState.x * speed;
+       this.player.velocity.y = -this.joystickState.y * speed; // Invert Y for intuitive controls
+       
+       // === AUTO-ROTATE: Ship faces movement direction ===
+       // Calculate target angle based on joystick input
+       const targetAngle = Math.atan2(this.joystickState.x, -this.joystickState.y);
+       const currentAngle = this.player.mesh.rotation.z;
+       
+       // Normalize angle difference to [-PI, PI]
+       let angleDiff = targetAngle - currentAngle;
+       while (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
+       while (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
+       
+       // Smooth rotation interpolation for natural feel
+       this.player.mesh.rotation.z += angleDiff * rotationLerpSpeed;
+       
+     } else {
+       // === DAMPING: Gradually stop when joystick released ===
+       // Apply friction for smooth deceleration
+       this.player.velocity.x *= 0.9;
+       this.player.velocity.y *= 0.9;
+     }
+     
+     // === FIRING ===
+     if (this.firePressed) {
+       this.player.shoot();
+     }
+   }
   
   /**
    * Cleanup mobile controls (if needed)
