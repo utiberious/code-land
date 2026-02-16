@@ -41,11 +41,12 @@ jobs:
       - name: Prepare deployment
         run: |
           # Create deployment structure
-          # URLs: /mimi/counter-20260215-040523/ and /mimi/stellar-voyage-20260215-041113/
           mkdir -p _site/mimi/counter-20260215-040523
           mkdir -p _site/mimi/stellar-voyage-20260215-041113
+          mkdir -p _site/demos
           cp -r mimi/counter-20260215-040523/dist/* _site/mimi/counter-20260215-040523/
           cp -r mimi/stellar-voyage-20260215-041113/dist/* _site/mimi/stellar-voyage-20260215-041113/
+          cp -r demos/* _site/demos/
           cp index.html _site/
 
       - name: Setup Pages
