@@ -48,189 +48,56 @@ export class Player {
    }
   
    /**
-    * Create the player ship geometry with detailed components
+    * Create ultra-simple test cube (debugging ship visibility)
+    * TEMPORARY: Replace with real ship once visibility confirmed
     */
    createShip() {
-     console.log('[Player.createShip] Starting ship creation...');
+     console.log('[Player.createShip] Starting SIMPLE TEST CUBE creation...');
      
      try {
-       // Create a group for the entire ship
        this.mesh = new THREE.Group();
-       console.log('[Player.createShip] Group created');
        
-       // === FUSELAGE/MAIN BODY ===
-       // Main fuselage using cylinder for streamlined shape
-       const fuselageGeometry = new THREE.CylinderGeometry(0.4, 0.35, 2.5, 8);
-       const fuselageMaterial = new THREE.MeshStandardMaterial({
-         color: 0x1a1a2e,
-         emissive: 0x0a0a14,
-         metalness: 0.85,
-         roughness: 0.25
+       // === GIANT BRIGHT TEST CUBE ===
+       // 15 units on each side - ENORMOUS
+       const cubeGeometry = new THREE.BoxGeometry(15, 15, 15);
+       
+       // Bright magenta - impossible to miss
+       const cubeMaterial = new THREE.MeshBasicMaterial({
+         color: 0xff00ff,
+         wireframe: false,
+         transparent: false
        });
-       const fuselage = new THREE.Mesh(fuselageGeometry, fuselageMaterial);
-       fuselage.rotation.z = Math.PI / 2; // Rotate so it points along Y axis
-       fuselage.position.y = 0;
-       this.mesh.add(fuselage);
-       console.log('[Player.createShip] Fuselage added');
-    
-    // === NOSE CONE ===
-    // Sharp nose for better aerodynamic appearance
-    const noseGeometry = new THREE.ConeGeometry(0.35, 0.8, 8);
-    const noseMaterial = new THREE.MeshStandardMaterial({
-      color: 0x0d47a1,
-      emissive: 0x1565c0,
-      metalness: 0.9,
-      roughness: 0.2
-    });
-    const nose = new THREE.Mesh(noseGeometry, noseMaterial);
-    nose.rotation.z = Math.PI / 2;
-    nose.position.y = 1.5; // Front of ship
-    this.mesh.add(nose);
-    
-    // === COCKPIT ===
-    // Transparent spherical cockpit
-    const cockpitGeometry = new THREE.SphereGeometry(0.3, 8, 8, 0, Math.PI * 2, 0, Math.PI / 2);
-    const cockpitMaterial = new THREE.MeshStandardMaterial({
-      color: 0x80d8ff,
-      emissive: 0x4dd0e1,
-      transparent: true,
-      opacity: 0.6,
-      metalness: 0.3,
-      roughness: 0.1
-    });
-    const cockpit = new THREE.Mesh(cockpitGeometry, cockpitMaterial);
-    cockpit.position.y = 0.3;
-    cockpit.position.z = 0.2;
-    this.mesh.add(cockpit);
-    
-    // === ENGINE NOZZLES ===
-    // Left engine
-    const engineGeometry = new THREE.CylinderGeometry(0.15, 0.12, 0.6, 6);
-    const engineMaterial = new THREE.MeshStandardMaterial({
-      color: 0x0a0a0a,
-      emissive: 0x0088ff,
-      metalness: 0.95,
-      roughness: 0.15
-    });
-    
-    const engineLeft = new THREE.Mesh(engineGeometry, engineMaterial);
-    engineLeft.rotation.z = Math.PI / 2;
-    engineLeft.position.x = -0.35;
-    engineLeft.position.y = -1.3;
-    this.mesh.add(engineLeft);
-    
-    // Right engine
-    const engineRight = new THREE.Mesh(engineGeometry, engineMaterial);
-    engineRight.rotation.z = Math.PI / 2;
-    engineRight.position.x = 0.35;
-    engineRight.position.y = -1.3;
-    this.mesh.add(engineRight);
-    
-    // Engine glow effects
-    const engineGlowMaterial = new THREE.MeshBasicMaterial({
-      color: 0x0088ff,
-      transparent: true,
-      opacity: 0.5
-    });
-    
-    const glowLeft = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.2, 0.15, 0.8, 6),
-      engineGlowMaterial.clone()
-    );
-    glowLeft.rotation.z = Math.PI / 2;
-    glowLeft.position.x = -0.35;
-    glowLeft.position.y = -1.3;
-    this.mesh.add(glowLeft);
-    this.engineGlows.push(glowLeft);
-    
-    const glowRight = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.2, 0.15, 0.8, 6),
-      engineGlowMaterial.clone()
-    );
-    glowRight.rotation.z = Math.PI / 2;
-    glowRight.position.x = 0.35;
-    glowRight.position.y = -1.3;
-    this.mesh.add(glowRight);
-    this.engineGlows.push(glowRight);
-    
-    // === WINGS ===
-    // Create trapezoidal wings using BoxGeometry positioned at angles
-    const wingGeometry = new THREE.BoxGeometry(1.6, 0.08, 0.5);
-    const wingMaterial = new THREE.MeshStandardMaterial({
-      color: 0x263238,
-      emissive: 0x121212,
-      metalness: 0.7,
-      roughness: 0.4
-    });
-    
-    const wingLeft = new THREE.Mesh(wingGeometry, wingMaterial);
-    wingLeft.position.x = -0.95;
-    wingLeft.position.y = 0.2;
-    wingLeft.rotation.z = 0.2; // Slight angle
-    wingLeft.position.z = -0.3;
-    this.mesh.add(wingLeft);
-    
-    const wingRight = new THREE.Mesh(wingGeometry, wingMaterial);
-    wingRight.position.x = 0.95;
-    wingRight.position.y = 0.2;
-    wingRight.rotation.z = -0.2; // Opposite angle
-    wingRight.position.z = -0.3;
-    this.mesh.add(wingRight);
-    
-    // === WEAPON MOUNTS ===
-    // Left weapon hardpoint
-    const weaponGeometry = new THREE.BoxGeometry(0.15, 0.15, 0.3);
-    const weaponMaterial = new THREE.MeshStandardMaterial({
-      color: 0xff6f00,
-      emissive: 0xff6f00,
-      metalness: 0.8,
-      roughness: 0.3
-    });
-    
-    const weaponLeft = new THREE.Mesh(weaponGeometry, weaponMaterial);
-    weaponLeft.position.x = -0.5;
-    weaponLeft.position.y = 0.7;
-    weaponLeft.position.z = 0.1;
-    this.mesh.add(weaponLeft);
-    this.weaponLeft = weaponLeft;
-    
-    const weaponRight = new THREE.Mesh(weaponGeometry, weaponMaterial);
-    weaponRight.position.x = 0.5;
-    weaponRight.position.y = 0.7;
-    weaponRight.position.z = 0.1;
-    this.mesh.add(weaponRight);
-    this.weaponRight = weaponRight;
-    
-       // Set initial position
+       
+       const testCube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+       this.mesh.add(testCube);
+       
+       // Also add a wireframe outline for extra visibility
+       const wireframeGeometry = new THREE.BoxGeometry(16, 16, 16);
+       const wireframeMaterial = new THREE.MeshBasicMaterial({
+         color: 0x00ffff,
+         wireframe: true,
+         transparent: false
+       });
+       const wireframeCube = new THREE.Mesh(wireframeGeometry, wireframeMaterial);
+       this.mesh.add(wireframeCube);
+       
+       // Set position at origin
        this.mesh.position.set(0, 0, 0);
-       console.log('[Player.createShip] Mesh positioned at (0, 0, 0)');
        
-       // === SCALE UP FOR MOBILE VISIBILITY ===
-       // Check if mobile (touch support)
-       const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-       if (isMobile) {
-         this.mesh.scale.set(2.5, 2.5, 2.5); // 2.5x larger on mobile
-         console.log('[Player.createShip] Mobile detected - scaling ship 2.5x');
-       }
-       
+       // Add to scene
        this.scene.add(this.mesh);
-       console.log('[Player.createShip] Mesh added to scene');
-       console.log('[Player.createShip] Scene now has', this.scene.children.length, 'children');
        
-       // === DEBUG: Add bright marker at ship position ===
-       const debugMarkerGeometry = new THREE.SphereGeometry(1.5, 16, 16);
-       const debugMarkerMaterial = new THREE.MeshBasicMaterial({
-         color: 0xff0000,
-         transparent: true,
-         opacity: 0.7
-       });
-       this.debugMarker = new THREE.Mesh(debugMarkerGeometry, debugMarkerMaterial);
-       this.debugMarker.position.copy(this.mesh.position);
-       this.scene.add(this.debugMarker);
-       console.log('[Player.createShip] DEBUG: Red marker added at ship position');
+       console.log('[Player.createShip] ✅ GIANT TEST CUBE CREATED!');
+       console.log('[Player.createShip]   Size: 15x15x15 units (HUGE)');
+       console.log('[Player.createShip]   Color: Bright Magenta (0xff00ff)');
+       console.log('[Player.createShip]   Wireframe: Cyan (0x00ffff)');
+       console.log('[Player.createShip]   Position:', this.mesh.position);
+       console.log('[Player.createShip]   This should be IMPOSSIBLE to miss!');
        
-       console.log('[Player.createShip] Ship creation complete!');
-       console.log('[Player.createShip] Ship scale:', this.mesh.scale);
+       // Initialize empty arrays for compatibility
+       this.engineGlows = [];
+       this.weaponLeft = null;
+       this.weaponRight = null;
      } catch (err) {
        console.error('[Player.createShip] ERROR during ship creation:', err.message, err);
        throw err;

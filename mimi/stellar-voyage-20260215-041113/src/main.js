@@ -49,9 +49,9 @@ function initThreeJs() {
      
      // Create camera
      camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 2000);
-     camera.position.set(0, 0, 30);
+     camera.position.set(0, 0, 25);  // Closer for better visibility
      camera.lookAt(0, 0, 0);
-     console.log('✓ Camera created at (0, 0, 30)');
+     console.log('✓ Camera created at (0, 0, 25) - closer for test cube');
      
      // Create renderer
      console.log('Creating WebGL renderer...');
