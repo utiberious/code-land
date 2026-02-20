@@ -26,36 +26,46 @@ jobs:
         with:
           bun-version: latest
 
-      - name: Build Counter
+      - name: Build all projects dynamically
         run: |
-          cd mimi/counter-20260215-040523
-          bun install
-          bun run build
-
-      - name: Build Stellar Voyage (Three.js)
-        run: |
-          cd mimi/stellar-voyage-20260215-041113
-          bun install
-          bun run build
-
-      - name: Build Stellar Voyage (Babylon.js)
-        run: |
-          cd mimi/stellar-voyage-babylonjs
-          bun install
-          bun run build
+          mkdir -p _site
+          
+          # Find and build all Bun projects in mimi/
+          for project_dir in mimi/*/; do
+            project_name=$(basename "$project_dir")
+            
+            # Check if it's a valid Bun project
+            if [ -f "$project_dir/package.json" ]; then
+              echo "Building: $project_name"
+              cd "$project_dir"
+              bun install
+              bun run build
+              cd - > /dev/null
+              
+              # Copy build artifacts to _site
+              if [ -d "$project_dir/dist" ]; then
+                mkdir -p "_site/mimi/$project_name"
+                cp -r "$project_dir/dist/"* "_site/mimi/$project_name/"
+                echo "✓ Deployed $project_name"
+              fi
+            fi
+          done
 
       - name: Prepare deployment
         run: |
-          # Create deployment structure
-          mkdir -p _site/mimi/counter-20260215-040523
-          mkdir -p _site/mimi/stellar-voyage-20260215-041113
-          mkdir -p _site/mimi/stellar-voyage-babylonjs
-          mkdir -p _site/demos
-          cp -r mimi/counter-20260215-040523/dist/* _site/mimi/counter-20260215-040523/
-          cp -r mimi/stellar-voyage-20260215-041113/dist/* _site/mimi/stellar-voyage-20260215-041113/
-          cp -r mimi/stellar-voyage-babylonjs/dist/* _site/mimi/stellar-voyage-babylonjs/
-          cp -r demos/* _site/demos/ || true
+          # Copy root index.html and optional demos/
           cp index.html _site/
+          
+          # Copy demos/ if it exists
+          if [ -d "demos" ]; then
+            mkdir -p _site/demos
+            cp -r demos/* _site/demos/ || true
+            echo "✓ Copied demos/"
+          fi
+          
+          # List final deployment structure
+          echo "Deployment structure:"
+          find _site -type f | head -20
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
