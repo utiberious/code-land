@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shopping List</title>
+<script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f0f2f5;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 40px 16px;
+  }
+
+  #app {
+    width: 100%;
+    max-width: 520px;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+    color: #1a1a2e;
+    margin-bottom: 24px;
+    text-align: center;
+  }
+
+  .counters {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .counter-badge {
+    background: #fff;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    color: #555;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+
+  .counter-badge strong {
+    color: #4361ee;
+  }
+
+  .input-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+
+  .input-row input {
+    flex: 1;
+    padding: 12px 16px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .input-row input:focus {
+    border-color: #4361ee;
+  }
+
+  .input-row button {
+    padding: 12px 20px;
+    background: #4361ee;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    white-space: nowrap;
+  }
+
+  .input-row button:hover { background: #3a56d4; }
+  .input-row button:active { transform: scale(0.96); }
+
+  .empty-state {
+    text-align: center;
+    color: #999;
+    padding: 48px 0;
+    font-size: 1.05rem;
+  }
+
+  .list { display: flex; flex-direction: column; gap: 8px; }
+
+  .item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #fff;
+    padding: 14px 16px;
+    border-radius: 10px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    transition: opacity 0.3s, transform 0.3s;
+  }
+
+  .item.purchased { opacity: 0.6; }
+
+  .item input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    accent-color: #4361ee;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .item-name {
+    flex: 1;
+    font-size: 1rem;
+    color: #333;
+    transition: color 0.2s;
+    word-break: break-word;
+  }
+
+  .item.purchased .item-name {
+    text-decoration: line-through;
+    color: #aaa;
+  }
+
+  .remove-btn {
+    background: none;
+    border: none;
+    color: #ccc;
+    font-size: 1.3rem;
+    cursor: pointer;
+    padding: 0 4px;
+    line-height: 1;
+    transition: color 0.2s;
+    flex-shrink: 0;
+  }
+
+  .remove-btn:hover { color: #e63946; }
+
+  /* Transition group animations */
+  .list-enter-from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  .list-enter-active {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  .list-leave-active {
+    transition: opacity 0.25s ease, transform 0.25s ease;
+  }
+  .list-leave-to {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  .list-move {
+    transition: transform 0.3s ease;
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <h1>Shopping List</h1>
+
+  <div class="counters">
+    <span class="counter-badge">Total: <strong>{{ items.length }}</strong></span>
+    <span class="counter-badge">Purchased: <strong>{{ purchasedCount }}</strong></span>
+    <span class="counter-badge">Remaining: <strong>{{ items.length - purchasedCount }}</strong></span>
+  </div>
+
+  <form class="input-row" @submit.prevent="addItem">
+    <input v-model.trim="newItem" placeholder="Add an item..." autofocus>
+    <button type="submit">Add</button>
+  </form>
+
+  <div v-if="items.length === 0" class="empty-state">Your list is empty</div>
+
+  <transition-group name="list" tag="div" class="list">
+    <div v-for="item in items" :key="item.id" class="item" :class="{ purchased: item.done }">
+      <input type="checkbox" v-model="item.done">
+      <span class="item-name">{{ item.name }}</span>
+      <button class="remove-btn" @click="removeItem(item.id)" title="Remove">&times;</button>
+    </div>
+  </transition-group>
+</div>
+
+<script>
+const { createApp, ref, computed, watch } = Vue
+
+createApp({
+  setup() {
+    const newItem = ref('')
+    const items = ref(JSON.parse(localStorage.getItem('shopping-list') || '[]'))
+    let nextId = items.value.reduce((max, i) => Math.max(max, i.id), 0) + 1
+
+    const purchasedCount = computed(() => items.value.filter(i => i.done).length)
+
+    watch(items, (val) => {
+      localStorage.setItem('shopping-list', JSON.stringify(val))
+    }, { deep: true })
+
+    function addItem() {
+      if (!newItem.value) return
+      items.value.push({ id: nextId++, name: newItem.value, done: false })
+      newItem.value = ''
+    }
+
+    function removeItem(id) {
+      items.value = items.value.filter(i => i.id !== id)
+    }
+
+    return { newItem, items, purchasedCount, addItem, removeItem }
+  }
+}).mount('#app')
+</script>
+</body>
+</html>
